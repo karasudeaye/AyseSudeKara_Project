@@ -35,9 +35,9 @@ namespace AyseSudeKara_Project
 
                 addButton.Clicked += (s, e) =>
                 {
-                    ProductAdded?.Invoke(product); // Delegate ile ürünü ekleme
-                    addButton.Text = "?"; // Ýþaretle
-                    addButton.IsEnabled = false; // Tekrar eklemeyi önle
+                    ProductAdded?.Invoke(product); 
+                    addButton.Text = "?"; 
+                    addButton.IsEnabled = false; 
                 };
 
                 productLayout.Children.Add(productLabel);
