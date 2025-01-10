@@ -23,8 +23,7 @@ namespace AyseSudeKara_Project
 
         private async void OnAddProductClicked(object sender, EventArgs e)
         {
-
-            var addProductPage = new AddProductPage();
+            var addProductPage = new AddProductPage(existingAddedProducts: products); 
             addProductPage.ProductAdded += (s, productName) =>
             {
                 if (!products.Contains(productName))
@@ -32,10 +31,17 @@ namespace AyseSudeKara_Project
                     products.Add(productName);
                     UpdateProductList();
                 }
+                else
+                {
+                    products.Remove(productName); 
+                    UpdateProductList();
+                }
             };
 
             await Navigation.PushAsync(addProductPage);
         }
+
+
 
         private void UpdateProductList()
         {

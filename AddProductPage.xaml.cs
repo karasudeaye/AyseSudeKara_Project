@@ -7,12 +7,13 @@ namespace AyseSudeKara_Project
     public partial class AddProductPage : ContentPage
     {
         public event EventHandler<string> ProductAdded; 
-        private List<Product> products;
-        private List<string> addedProducts = new List<string>(); 
+        private List<Product> products; 
+        private List<string> addedProducts; 
 
-        public AddProductPage()
+        public AddProductPage(List<string> existingAddedProducts)
         {
             InitializeComponent();
+            addedProducts = existingAddedProducts; 
             InitializeProducts(); 
             DisplayProducts(products); 
         }
@@ -33,54 +34,52 @@ namespace AyseSudeKara_Project
 
         private void DisplayProducts(IEnumerable<Product> productList)
         {
-            ProductGrid.Children.Clear();
-            ProductGrid.ColumnDefinitions.Clear();
-
-
-            ProductGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-            ProductGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-
-            int row = 0;
-            int column = 0;
+            ProductListLayout.Children.Clear();
 
             foreach (var product in productList)
             {
 
-                var productStack = new StackLayout
+                var productRow = new Grid
                 {
-                    Orientation = StackOrientation.Vertical,
+                    ColumnDefinitions =
+                    {
+                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) }, 
+                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }, 
+                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) }  
+                    },
                     Padding = 10,
-                    BackgroundColor = Colors.LightGray,
-                    WidthRequest = 150
+                    Margin = new Thickness(0, 5),
+                    BackgroundColor = Colors.LightGray
                 };
 
 
                 var productImage = new Image
                 {
                     Source = product.ImageSource,
-                    WidthRequest = 100,
-                    HeightRequest = 100,
-                    HorizontalOptions = LayoutOptions.Center
+                    WidthRequest = 50,
+                    HeightRequest = 50,
+                    VerticalOptions = LayoutOptions.Center
                 };
 
 
                 var productName = new Label
                 {
                     Text = product.Name,
-                    FontSize = 14,
-                    HorizontalTextAlignment = TextAlignment.Center,
-                    LineBreakMode = LineBreakMode.TailTruncation,
-                    MaxLines = 2
+                    FontSize = 16,
+                    VerticalOptions = LayoutOptions.Center,
+                    HorizontalOptions = LayoutOptions.StartAndExpand,
+                    LineBreakMode = LineBreakMode.TailTruncation
                 };
 
 
                 var addButton = new Button
                 {
-                    Text = "+",
-                    BackgroundColor = Colors.LightBlue,
-                    WidthRequest = 40,
-                    HorizontalOptions = LayoutOptions.Center
+                    Text = addedProducts.Contains(product.Name) ? "✓" : "+",
+                    BackgroundColor = addedProducts.Contains(product.Name) ? Colors.Green : Colors.LightBlue,
+                    WidthRequest = 50,
+                    VerticalOptions = LayoutOptions.Center
                 };
+
 
                 addButton.Clicked += (s, e) =>
                 {
@@ -101,41 +100,25 @@ namespace AyseSudeKara_Project
                 };
 
 
-                productStack.Children.Add(productImage);
-                productStack.Children.Add(productName);
-                productStack.Children.Add(addButton);
+                productRow.Children.Add(productImage, 0, 0);
+                productRow.Children.Add(productName, 1, 0);
+                productRow.Children.Add(addButton, 2, 0);
 
 
-                ProductGrid.Children.Add(productStack);
-                Grid.SetColumn(productStack, column);
-                Grid.SetRow(productStack, row);
-
-                column++;
-                if (column > 1) 
-                {
-                    column = 0;
-                    row++;
-                }
+                ProductListLayout.Children.Add(productRow);
             }
         }
 
+        private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+        {
+            var searchText = e.NewTextValue?.ToLower() ?? string.Empty;
+            var filteredProducts = products.Where(p => p.Name.ToLower().Contains(searchText));
+            DisplayProducts(filteredProducts);
+        }
 
         private void OnBackButtonClicked(object sender, EventArgs e)
         {
-            Navigation.PopAsync(); 
-        }
-
-        private void OnSearchButtonClicked(object sender, EventArgs e)
-        {
-
-            DisplayPromptAsync("Arama", "Ürün adı girin:").ContinueWith(t =>
-            {
-                if (!string.IsNullOrWhiteSpace(t.Result))
-                {
-                    var filteredProducts = products.Where(p => p.Name.Contains(t.Result, StringComparison.OrdinalIgnoreCase));
-                    MainThread.BeginInvokeOnMainThread(() => DisplayProducts(filteredProducts));
-                }
-            });
+            Navigation.PopAsync();
         }
     }
 

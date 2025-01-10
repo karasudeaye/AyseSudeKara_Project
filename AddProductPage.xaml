@@ -10,14 +10,14 @@
         <StackLayout Orientation="Horizontal" Padding="10">
             <Button Text="←" Clicked="OnBackButtonClicked" />
             <Label Text="Ürünler" FontSize="24" HorizontalOptions="CenterAndExpand" />
-            <Button Text="🔍" Clicked="OnSearchButtonClicked" />
+            <Entry x:Name="SearchEntry" Placeholder="Arama..." TextChanged="OnSearchTextChanged" HorizontalOptions="EndAndExpand" />
         </StackLayout>
 
 
         <ScrollView>
-            <Grid x:Name="ProductGrid" Padding="10" ColumnSpacing="10" RowSpacing="10">
+            <StackLayout x:Name="ProductListLayout" Padding="10">
 
-            </Grid>
+            </StackLayout>
         </ScrollView>
 
     </StackLayout>
