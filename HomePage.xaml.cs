@@ -6,19 +6,72 @@ namespace AyseSudeKara_Project
 {
     public partial class HomePage : ContentPage
     {
-        private DateTime currentDate;
         private List<string> products = new List<string>();
+        private DateTime currentDate;
+
 
         public HomePage()
         {
             InitializeComponent();
-            currentDate = DateTime.Now;
             UpdateDate();
         }
 
         private void UpdateDate()
         {
-            DateLabel.Text = currentDate.ToString("dd MMMM yyyy");
+            DateLabel.Text = DateTime.Now.ToString("dd MMMM yyyy");
+        }
+
+        private async void OnAddProductClicked(object sender, EventArgs e)
+        {
+
+            var addProductPage = new AddProductPage();
+            addProductPage.ProductAdded += (s, productName) =>
+            {
+                if (!products.Contains(productName))
+                {
+                    products.Add(productName);
+                    UpdateProductList();
+                }
+            };
+
+            await Navigation.PushAsync(addProductPage);
+        }
+
+        private void UpdateProductList()
+        {
+            ToDoList.Children.Clear();
+
+            if (products.Count == 0)
+            {
+                EmptyListLabel.IsVisible = true;
+            }
+            else
+            {
+                EmptyListLabel.IsVisible = false;
+                foreach (var product in products)
+                {
+                    var productStack = new StackLayout { Orientation = StackOrientation.Horizontal, Padding = 5 };
+                    var checkbox = new CheckBox { HorizontalOptions = LayoutOptions.Start };
+                    var label = new Label { Text = product, VerticalOptions = LayoutOptions.Center };
+
+                    checkbox.CheckedChanged += (s, args) =>
+                    {
+                        if (args.Value)
+                        {
+                            label.TextDecorations = TextDecorations.Strikethrough;
+                        }
+                        else
+                        {
+                            label.TextDecorations = TextDecorations.None;
+                        }
+                    };
+
+                    productStack.Children.Add(checkbox);
+                    productStack.Children.Add(label);
+
+                    ToDoList.Children.Add(productStack);
+                }
+            }
         }
 
         private void OnPreviousDayClicked(object sender, EventArgs e)
@@ -33,35 +86,5 @@ namespace AyseSudeKara_Project
             UpdateDate();
         }
 
-        private async void OnAddProductClicked(object sender, EventArgs e)
-        {
-            await DisplayAlert("Ürün Ekle", "Bu sayfa henüz tasarlanmadý.", "Tamam");
-        }
-
-        public void AddProduct(string productName)
-        {
-            EmptyListLabel.IsVisible = false;
-
-            var productStack = new StackLayout { Orientation = StackOrientation.Horizontal, Padding = 5 };
-            var checkbox = new CheckBox { HorizontalOptions = LayoutOptions.Start };
-            var label = new Label { Text = productName, VerticalOptions = LayoutOptions.Center };
-
-            checkbox.CheckedChanged += (s, args) =>
-            {
-                if (args.Value)
-                {
-                    label.TextDecorations = TextDecorations.Strikethrough;
-                }
-                else
-                {
-                    label.TextDecorations = TextDecorations.None;
-                }
-            };
-
-            productStack.Children.Add(checkbox);
-            productStack.Children.Add(label);
-
-            ToDoList.Children.Add(productStack);
-        }
     }
 }

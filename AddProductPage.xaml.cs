@@ -1,50 +1,147 @@
-using Microsoft.Maui.Controls;
-using System;
+ï»¿using Microsoft.Maui.Controls;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AyseSudeKara_Project
 {
     public partial class AddProductPage : ContentPage
     {
-        public delegate void ProductAddedHandler(string productName);
-        public event ProductAddedHandler ProductAdded;
-
-        private List<string> availableProducts = new List<string>
-        {
-            "The Purest Solutions Toz Peeling",
-            "CLINIQUE Moisture Surge™ - 100H Auto-Replenishing Nemlendirici",
-            "ERBORIAN CC Eye with Centella Asiatica",
-            "The Purest Solutions Aydýnlatýcý C Vitamini Cilt Serumu",
-            "ESTÉE LAUDER Advanced Night Repair - Onarýcý Gece Serumu",
-            "Maru-Derm Hyalüronik Asit & Kolajen Cilt Bakým Serumu"
-        };
+        public event EventHandler<string> ProductAdded; 
+        private List<Product> products;
+        private List<string> addedProducts = new List<string>(); 
 
         public AddProductPage()
         {
             InitializeComponent();
-            PopulateProductList();
+            InitializeProducts(); 
+            DisplayProducts(products); 
         }
 
-        private void PopulateProductList()
+        private void InitializeProducts()
         {
-            foreach (var product in availableProducts)
+
+            products = new List<Product>
             {
-                var productLayout = new StackLayout { Orientation = StackOrientation.Horizontal, Padding = 5 };
-                var productLabel = new Label { Text = product, VerticalOptions = LayoutOptions.Center };
-                var addButton = new Button { Text = "+" };
+                new Product { Name = "The Purest Solutions Toz Peeling", ImageSource = "purest_peeling.jpg" },
+                new Product { Name = "CLINIQUE Moisture Surgeâ„¢ - 100H Auto-Replenishing Nemlendirici", ImageSource = "clinique_moisturizer.jpg" },
+                new Product { Name = "ERBORIAN CC Eye with Centella Asiatica", ImageSource = "erborian_cc_eye.jpg" },
+                new Product { Name = "The Purest Solutions AydÄ±nlatÄ±cÄ± C Vitamini Cilt Serumu", ImageSource = "purest_cvitamin.jpg" },
+                new Product { Name = "ESTÃ‰E LAUDER Advanced Night Repair - OnarÄ±cÄ± Gece Serumu", ImageSource = "estee_night_repair.jpg" },
+                new Product { Name = "Maru-Derm HyalÃ¼ronik Asit & Kolajen Cilt BakÄ±m Serumu", ImageSource = "maruderm_hyaluronic.jpg" }
+            };
+        }
+
+        private void DisplayProducts(IEnumerable<Product> productList)
+        {
+            ProductGrid.Children.Clear();
+            ProductGrid.ColumnDefinitions.Clear();
+
+
+            ProductGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            ProductGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+
+            int row = 0;
+            int column = 0;
+
+            foreach (var product in productList)
+            {
+
+                var productStack = new StackLayout
+                {
+                    Orientation = StackOrientation.Vertical,
+                    Padding = 10,
+                    BackgroundColor = Colors.LightGray,
+                    WidthRequest = 150
+                };
+
+
+                var productImage = new Image
+                {
+                    Source = product.ImageSource,
+                    WidthRequest = 100,
+                    HeightRequest = 100,
+                    HorizontalOptions = LayoutOptions.Center
+                };
+
+
+                var productName = new Label
+                {
+                    Text = product.Name,
+                    FontSize = 14,
+                    HorizontalTextAlignment = TextAlignment.Center,
+                    LineBreakMode = LineBreakMode.TailTruncation,
+                    MaxLines = 2
+                };
+
+
+                var addButton = new Button
+                {
+                    Text = "+",
+                    BackgroundColor = Colors.LightBlue,
+                    WidthRequest = 40,
+                    HorizontalOptions = LayoutOptions.Center
+                };
 
                 addButton.Clicked += (s, e) =>
                 {
-                    ProductAdded?.Invoke(product); 
-                    addButton.Text = "?"; 
-                    addButton.IsEnabled = false; 
+                    if (addedProducts.Contains(product.Name))
+                    {
+                        addedProducts.Remove(product.Name);
+                        ProductAdded?.Invoke(this, product.Name); 
+                        addButton.Text = "+";
+                        addButton.BackgroundColor = Colors.LightBlue;
+                    }
+                    else
+                    {
+                        addedProducts.Add(product.Name);
+                        ProductAdded?.Invoke(this, product.Name); 
+                        addButton.Text = "âœ“";
+                        addButton.BackgroundColor = Colors.Green;
+                    }
                 };
 
-                productLayout.Children.Add(productLabel);
-                productLayout.Children.Add(addButton);
 
-                ProductList.Children.Add(productLayout);
+                productStack.Children.Add(productImage);
+                productStack.Children.Add(productName);
+                productStack.Children.Add(addButton);
+
+
+                ProductGrid.Children.Add(productStack);
+                Grid.SetColumn(productStack, column);
+                Grid.SetRow(productStack, row);
+
+                column++;
+                if (column > 1) 
+                {
+                    column = 0;
+                    row++;
+                }
             }
         }
+
+
+        private void OnBackButtonClicked(object sender, EventArgs e)
+        {
+            Navigation.PopAsync(); 
+        }
+
+        private void OnSearchButtonClicked(object sender, EventArgs e)
+        {
+
+            DisplayPromptAsync("Arama", "ÃœrÃ¼n adÄ± girin:").ContinueWith(t =>
+            {
+                if (!string.IsNullOrWhiteSpace(t.Result))
+                {
+                    var filteredProducts = products.Where(p => p.Name.Contains(t.Result, StringComparison.OrdinalIgnoreCase));
+                    MainThread.BeginInvokeOnMainThread(() => DisplayProducts(filteredProducts));
+                }
+            });
+        }
+    }
+
+    public class Product
+    {
+        public string Name { get; set; }
+        public string ImageSource { get; set; }
     }
 }

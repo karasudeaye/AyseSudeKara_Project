@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="AyseSudeKara_Project.AddProductPage">
+             x:Class="AyseSudeKara_Project.AddProductPage"
+             BackgroundColor="White">
 
-    <ScrollView>
-        <StackLayout x:Name="ProductList" Padding="10">
+    <StackLayout>
 
+
+        <StackLayout Orientation="Horizontal" Padding="10">
+            <Button Text="←" Clicked="OnBackButtonClicked" />
+            <Label Text="Ürünler" FontSize="24" HorizontalOptions="CenterAndExpand" />
+            <Button Text="🔍" Clicked="OnSearchButtonClicked" />
         </StackLayout>
-    </ScrollView>
+
+
+        <ScrollView>
+            <Grid x:Name="ProductGrid" Padding="10" ColumnSpacing="10" RowSpacing="10">
+
+            </Grid>
+        </ScrollView>
+
+    </StackLayout>
 
 </ContentPage>
