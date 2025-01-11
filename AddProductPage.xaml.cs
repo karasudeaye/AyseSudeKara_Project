@@ -7,19 +7,18 @@ namespace AyseSudeKara_Project
 {
     public partial class AddProductPage : ContentPage
     {
-        public event EventHandler<string> ProductAdded;  
-        public event EventHandler<string> ProductRemoved; 
+        public event EventHandler<string> ProductAdded;
 
         private List<Product> products;
         private List<string> addedProducts;
+        private List<string> toDoProducts;
 
         public AddProductPage(List<string> existingAddedProducts)
         {
+            InitializeComponent();
 
-
-
-            addedProducts = existingAddedProducts;
-
+            toDoProducts = existingAddedProducts ?? new List<string>();
+            addedProducts = new List<string>();
 
             products = new List<Product>
             {
@@ -30,7 +29,6 @@ namespace AyseSudeKara_Project
                 new Product { Name = "ESTÉE LAUDER Advanced Night Repair - Onarıcı Gece Serumu", ImageSource = "estee_night_repair.jpg" },
                 new Product { Name = "Maru-Derm Hyalüronik Asit & Kolajen Cilt Bakım Serumu", ImageSource = "maruderm_hyaluronic.jpg" }
             };
-
 
             UpdateProductList(products);
         }
@@ -61,7 +59,7 @@ namespace AyseSudeKara_Project
                     VerticalOptions = LayoutOptions.Center,
                     FontSize = 16,
                     LineBreakMode = LineBreakMode.WordWrap,
-                    WidthRequest = 200
+                    WidthRequest = 250
                 };
 
                 var addButton = new Button
@@ -76,14 +74,12 @@ namespace AyseSudeKara_Project
                     if (addedProducts.Contains(product.Name))
                     {
                         addedProducts.Remove(product.Name);
-                        ProductRemoved?.Invoke(this, product.Name); 
                         addButton.Text = "+";
                         addButton.BackgroundColor = Colors.Purple;
                     }
                     else
                     {
                         addedProducts.Add(product.Name);
-                        ProductAdded?.Invoke(this, product.Name); 
                         addButton.Text = "✓";
                         addButton.BackgroundColor = Colors.Green;
                     }
@@ -102,6 +98,26 @@ namespace AyseSudeKara_Project
             var query = e.NewTextValue.ToLower();
             var filteredProducts = products.Where(p => p.Name.ToLower().Contains(query));
             UpdateProductList(filteredProducts);
+        }
+
+        private void OnSaveButtonClicked(object sender, EventArgs e)
+        {
+            foreach (var productName in addedProducts)
+            {
+                if (!toDoProducts.Contains(productName))
+                {
+                    toDoProducts.Add(productName);
+                }
+            }
+
+
+            foreach (var productName in addedProducts)
+            {
+                ProductAdded?.Invoke(this, productName);
+            }
+
+
+            Navigation.PopAsync();
         }
     }
 

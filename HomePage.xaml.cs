@@ -40,8 +40,9 @@ namespace AyseSudeKara_Project
         private async void OnAddProductClicked(object sender, EventArgs e)
         {
             var addProductPage = new AddProductPage(toDoProducts);
+
             addProductPage.ProductAdded += OnProductAdded;
-            addProductPage.ProductRemoved += OnProductRemoved; 
+
             await Navigation.PushAsync(addProductPage);
         }
 
@@ -50,15 +51,6 @@ namespace AyseSudeKara_Project
             if (!toDoProducts.Contains(productName))
             {
                 toDoProducts.Add(productName);
-                UpdateToDoList();
-            }
-        }
-
-        private void OnProductRemoved(object sender, string productName)
-        {
-            if (toDoProducts.Contains(productName))
-            {
-                toDoProducts.Remove(productName);
                 UpdateToDoList();
             }
         }
@@ -77,7 +69,11 @@ namespace AyseSudeKara_Project
 
             foreach (var product in toDoProducts)
             {
-                var productStack = new StackLayout { Orientation = StackOrientation.Horizontal, Padding = 5 };
+                var productStack = new StackLayout
+                {
+                    Orientation = StackOrientation.Horizontal,
+                    Padding = 5
+                };
 
                 var label = new Label
                 {
