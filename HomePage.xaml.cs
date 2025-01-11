@@ -1,83 +1,28 @@
-using Microsoft.Maui.Controls;
 using System;
 using System.Collections.Generic;
+using Microsoft.Maui.Controls;
 
 namespace AyseSudeKara_Project
 {
     public partial class HomePage : ContentPage
     {
-        private List<string> products = new List<string>();
         private DateTime currentDate;
-
+        private List<string> toDoProducts;
 
         public HomePage()
         {
             InitializeComponent();
+
+            currentDate = DateTime.Now;
+            toDoProducts = new List<string>();
+
             UpdateDate();
+            UpdateToDoList();
         }
 
         private void UpdateDate()
         {
-            DateLabel.Text = DateTime.Now.ToString("dd MMMM yyyy");
-        }
-
-        private async void OnAddProductClicked(object sender, EventArgs e)
-        {
-            var addProductPage = new AddProductPage(existingAddedProducts: products); 
-            addProductPage.ProductAdded += (s, productName) =>
-            {
-                if (!products.Contains(productName))
-                {
-                    products.Add(productName);
-                    UpdateProductList();
-                }
-                else
-                {
-                    products.Remove(productName); 
-                    UpdateProductList();
-                }
-            };
-
-            await Navigation.PushAsync(addProductPage);
-        }
-
-
-
-        private void UpdateProductList()
-        {
-            ToDoList.Children.Clear();
-
-            if (products.Count == 0)
-            {
-                EmptyListLabel.IsVisible = true;
-            }
-            else
-            {
-                EmptyListLabel.IsVisible = false;
-                foreach (var product in products)
-                {
-                    var productStack = new StackLayout { Orientation = StackOrientation.Horizontal, Padding = 5 };
-                    var checkbox = new CheckBox { HorizontalOptions = LayoutOptions.Start };
-                    var label = new Label { Text = product, VerticalOptions = LayoutOptions.Center };
-
-                    checkbox.CheckedChanged += (s, args) =>
-                    {
-                        if (args.Value)
-                        {
-                            label.TextDecorations = TextDecorations.Strikethrough;
-                        }
-                        else
-                        {
-                            label.TextDecorations = TextDecorations.None;
-                        }
-                    };
-
-                    productStack.Children.Add(checkbox);
-                    productStack.Children.Add(label);
-
-                    ToDoList.Children.Add(productStack);
-                }
-            }
+            DateLabel.Text = currentDate.ToString("dd MMMM yyyy");
         }
 
         private void OnPreviousDayClicked(object sender, EventArgs e)
@@ -92,5 +37,74 @@ namespace AyseSudeKara_Project
             UpdateDate();
         }
 
+        private async void OnAddProductClicked(object sender, EventArgs e)
+        {
+            var addProductPage = new AddProductPage(toDoProducts);
+            addProductPage.ProductAdded += OnProductAdded;
+            addProductPage.ProductRemoved += OnProductRemoved; 
+            await Navigation.PushAsync(addProductPage);
+        }
+
+        private void OnProductAdded(object sender, string productName)
+        {
+            if (!toDoProducts.Contains(productName))
+            {
+                toDoProducts.Add(productName);
+                UpdateToDoList();
+            }
+        }
+
+        private void OnProductRemoved(object sender, string productName)
+        {
+            if (toDoProducts.Contains(productName))
+            {
+                toDoProducts.Remove(productName);
+                UpdateToDoList();
+            }
+        }
+
+        private void UpdateToDoList()
+        {
+            ToDoList.Children.Clear();
+
+            if (toDoProducts.Count == 0)
+            {
+                EmptyListLabel.IsVisible = true;
+                return;
+            }
+
+            EmptyListLabel.IsVisible = false;
+
+            foreach (var product in toDoProducts)
+            {
+                var productStack = new StackLayout { Orientation = StackOrientation.Horizontal, Padding = 5 };
+
+                var label = new Label
+                {
+                    Text = product,
+                    VerticalOptions = LayoutOptions.Center,
+                    FontSize = 16
+                };
+
+                var completeButton = new Button
+                {
+                    Text = "Tamamla",
+                    BackgroundColor = Colors.Green,
+                    TextColor = Colors.White,
+                    FontSize = 14
+                };
+
+                completeButton.Clicked += (s, e) =>
+                {
+                    label.TextDecorations = TextDecorations.Strikethrough;
+                    completeButton.IsEnabled = false;
+                };
+
+                productStack.Children.Add(label);
+                productStack.Children.Add(completeButton);
+
+                ToDoList.Children.Add(productStack);
+            }
+        }
     }
 }

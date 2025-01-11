@@ -3,21 +3,37 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AyseSudeKara_Project.HomePage">
 
-    <StackLayout Padding="20" Spacing="20">
+    <StackLayout Padding="20" Spacing="15">
 
-        <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
-            <Button Text="&lt;&lt;" Clicked="OnPreviousDayClicked" />
-            <Label x:Name="DateLabel" FontSize="18" VerticalOptions="Center" />
-            <Button Text="&gt;&gt;" Clicked="OnNextDayClicked" />
-            <Button Text="+" Clicked="OnAddProductClicked" HorizontalOptions="End" />
+
+        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Spacing="10">
+            <Button Text="&lt;" Clicked="OnPreviousDayClicked" />
+            <Label x:Name="DateLabel" FontSize="20" VerticalOptions="Center" HorizontalOptions="CenterAndExpand" />
+            <Button Text=">" Clicked="OnNextDayClicked" />
         </StackLayout>
 
+
+        <Label x:Name="EmptyListLabel" 
+               Text="Henüz bir ürün eklemediniz. Eklemek için + butonuna tıklayın." 
+               FontSize="16" 
+               HorizontalTextAlignment="Center" 
+               VerticalOptions="CenterAndExpand"
+               IsVisible="False" />
+
+
         <ScrollView>
-            <StackLayout x:Name="ToDoList" Padding="10">
-                <Label x:Name="EmptyListLabel" Text="Henüz bir ürün eklenmedi. Ürün eklemek için '+' butonunu kullanın." 
-                       FontSize="14" HorizontalOptions="Center" IsVisible="True" />
+            <StackLayout x:Name="ToDoList" Padding="10" Spacing="10">
+
             </StackLayout>
         </ScrollView>
+
+
+        <Button Text="+" 
+                FontSize="24" 
+                BackgroundColor="Purple" 
+                TextColor="White" 
+                HorizontalOptions="Center" 
+                Clicked="OnAddProductClicked" />
 
     </StackLayout>
 

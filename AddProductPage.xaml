@@ -2,22 +2,16 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AyseSudeKara_Project.AddProductPage"
-             BackgroundColor="White">
+             Title="Ürün Ekle">
 
-    <StackLayout>
+    <StackLayout Padding="10" Spacing="10">
 
 
-        <StackLayout Orientation="Horizontal" Padding="10">
-            <Button Text="←" Clicked="OnBackButtonClicked" />
-            <Label Text="Ürünler" FontSize="24" HorizontalOptions="CenterAndExpand" />
-            <Entry x:Name="SearchEntry" Placeholder="Arama..." TextChanged="OnSearchTextChanged" HorizontalOptions="EndAndExpand" />
-        </StackLayout>
+        <SearchBar x:Name="SearchBar" Placeholder="Ürün Ara..." TextChanged="OnSearchTextChanged" />
 
 
         <ScrollView>
-            <StackLayout x:Name="ProductListLayout" Padding="10">
-
-            </StackLayout>
+            <StackLayout x:Name="ProductList" Spacing="10" />
         </ScrollView>
 
     </StackLayout>
