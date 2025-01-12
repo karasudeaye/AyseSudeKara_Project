@@ -7,19 +7,17 @@ namespace AyseSudeKara_Project
 {
     public partial class AddProductPage : ContentPage
     {
-        public event EventHandler<string> ProductAdded;  
-        public event EventHandler<string> ProductRemoved; 
+        public event EventHandler<string> ProductAdded;
+        public event EventHandler<string> ProductRemoved;
 
-        private List<Product> products; 
-        private List<string> addedProducts; 
+        private List<Product> products;
+        private List<string> addedProducts;
 
         public AddProductPage(List<string> existingAddedProducts)
         {
             InitializeComponent();
 
-
             addedProducts = existingAddedProducts ?? new List<string>();
-
 
             products = new List<Product>
             {
@@ -73,13 +71,12 @@ namespace AyseSudeKara_Project
                 }
             };
 
-
             UpdateProductList(products);
         }
 
         private void UpdateProductList(IEnumerable<Product> productList)
         {
-            ProductList.Children.Clear(); 
+            ProductList.Children.Clear();
 
             foreach (var product in productList)
             {
@@ -115,7 +112,6 @@ namespace AyseSudeKara_Project
 
                 detailsButton.Clicked += async (s, e) =>
                 {
-
                     var detailPage = new ProductDetailsPage(product);
                     await Navigation.PushAsync(detailPage);
                 };
@@ -137,22 +133,17 @@ namespace AyseSudeKara_Project
 
         private async void OnSaveClicked(object sender, EventArgs e)
         {
-
             foreach (var productName in addedProducts)
             {
                 ProductAdded?.Invoke(this, productName);
             }
-
 
             foreach (var productName in products.Select(p => p.Name).Where(p => !addedProducts.Contains(p)))
             {
                 ProductRemoved?.Invoke(this, productName);
             }
 
-
             await DisplayAlert("Başarılı", "Ürünler kaydedildi.", "Tamam");
-
-
             await Navigation.PopAsync();
         }
     }
@@ -161,8 +152,8 @@ namespace AyseSudeKara_Project
     {
         public string Name { get; set; }
         public string ImageSource { get; set; }
-        public string Type { get; set; } 
-        public string UsageFrequency { get; set; } 
-        public string AdditionalInfo { get; set; } 
+        public string Type { get; set; }
+        public string UsageFrequency { get; set; }
+        public string AdditionalInfo { get; set; }
     }
 }

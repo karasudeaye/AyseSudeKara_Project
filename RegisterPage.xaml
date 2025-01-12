@@ -35,8 +35,7 @@
                    FontSize="18"
                    FontAttributes="Bold" />
             <DatePicker x:Name="BirthDatePicker"
-                        Format="dd/MM/yyyy"
-                        MaximumDate="{x:Static system:DateTime.Today}" />
+                        Format="dd/MM/yyyy"/>
 
 
             <Button Text="Kayıt Ol"

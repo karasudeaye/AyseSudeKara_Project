@@ -53,7 +53,7 @@ namespace AyseSudeKara_Project
             if (!toDoProducts.Contains(productName))
             {
                 toDoProducts.Add(productName);
-                UpdateToDoList(); 
+                UpdateToDoList();
             }
         }
 
@@ -62,7 +62,7 @@ namespace AyseSudeKara_Project
             if (toDoProducts.Contains(productName))
             {
                 toDoProducts.Remove(productName);
-                UpdateToDoList(); 
+                UpdateToDoList();
             }
         }
 
@@ -112,6 +112,12 @@ namespace AyseSudeKara_Project
 
                 ToDoList.Children.Add(productStack);
             }
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            UpdateToDoList(); 
         }
     }
 }
