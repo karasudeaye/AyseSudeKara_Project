@@ -7,18 +7,19 @@ namespace AyseSudeKara_Project
 {
     public partial class AddProductPage : ContentPage
     {
-        public event EventHandler<string> ProductAdded;
+        public event EventHandler<string> ProductAdded;  
+        public event EventHandler<string> ProductRemoved; 
 
-        private List<Product> products;
-        private List<string> addedProducts;
-        private List<string> toDoProducts;
+        private List<Product> products; 
+        private List<string> addedProducts; 
 
         public AddProductPage(List<string> existingAddedProducts)
         {
             InitializeComponent();
 
-            toDoProducts = existingAddedProducts ?? new List<string>();
-            addedProducts = new List<string>();
+
+            addedProducts = existingAddedProducts ?? new List<string>();
+
 
             products = new List<Product>
             {
@@ -30,12 +31,13 @@ namespace AyseSudeKara_Project
                 new Product { Name = "Maru-Derm Hyalüronik Asit & Kolajen Cilt Bakım Serumu", ImageSource = "maruderm_hyaluronic.jpg" }
             };
 
+
             UpdateProductList(products);
         }
 
         private void UpdateProductList(IEnumerable<Product> productList)
         {
-            ProductList.Children.Clear();
+            ProductList.Children.Clear(); 
 
             foreach (var product in productList)
             {
@@ -59,7 +61,7 @@ namespace AyseSudeKara_Project
                     VerticalOptions = LayoutOptions.Center,
                     FontSize = 16,
                     LineBreakMode = LineBreakMode.WordWrap,
-                    WidthRequest = 250
+                    WidthRequest = 200
                 };
 
                 var addButton = new Button
@@ -74,12 +76,14 @@ namespace AyseSudeKara_Project
                     if (addedProducts.Contains(product.Name))
                     {
                         addedProducts.Remove(product.Name);
+                        ProductRemoved?.Invoke(this, product.Name); 
                         addButton.Text = "+";
                         addButton.BackgroundColor = Colors.Purple;
                     }
                     else
                     {
                         addedProducts.Add(product.Name);
+                        ProductAdded?.Invoke(this, product.Name); 
                         addButton.Text = "✓";
                         addButton.BackgroundColor = Colors.Green;
                     }
@@ -100,16 +104,8 @@ namespace AyseSudeKara_Project
             UpdateProductList(filteredProducts);
         }
 
-        private void OnSaveButtonClicked(object sender, EventArgs e)
+        private async void OnSaveClicked(object sender, EventArgs e)
         {
-            foreach (var productName in addedProducts)
-            {
-                if (!toDoProducts.Contains(productName))
-                {
-                    toDoProducts.Add(productName);
-                }
-            }
-
 
             foreach (var productName in addedProducts)
             {
@@ -117,7 +113,13 @@ namespace AyseSudeKara_Project
             }
 
 
-            Navigation.PopAsync();
+            foreach (var productName in products.Select(p => p.Name).Where(p => !addedProducts.Contains(p)))
+            {
+                ProductRemoved?.Invoke(this, productName);
+            }
+
+
+            await Navigation.PopAsync();
         }
     }
 
