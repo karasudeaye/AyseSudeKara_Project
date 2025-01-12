@@ -76,7 +76,7 @@ namespace AyseSudeKara_Project
 
         private void UpdateProductList(IEnumerable<Product> productList)
         {
-            ProductList.Children.Clear();
+            ProductList.Children.Clear(); 
 
             foreach (var product in productList)
             {
@@ -100,14 +100,16 @@ namespace AyseSudeKara_Project
                     VerticalOptions = LayoutOptions.Center,
                     FontSize = 16,
                     LineBreakMode = LineBreakMode.WordWrap,
-                    WidthRequest = 200
+                    WidthRequest = 150 
                 };
 
                 var detailsButton = new Button
                 {
-                    Text = "Detaylar",
+                    Text = "Detay",
                     BackgroundColor = Colors.Orange,
-                    TextColor = Colors.White
+                    TextColor = Colors.White,
+                    FontSize = 14,
+                    HorizontalOptions = LayoutOptions.End
                 };
 
                 detailsButton.Clicked += async (s, e) =>
@@ -116,13 +118,56 @@ namespace AyseSudeKara_Project
                     await Navigation.PushAsync(detailPage);
                 };
 
+                var addButton = new Button
+                {
+                    Text = addedProducts.Contains(product.Name) ? "✓" : "+", 
+                    BackgroundColor = addedProducts.Contains(product.Name) ? Colors.Green : Colors.Purple,
+                    TextColor = Colors.White,
+                    FontSize = 14,
+                    HorizontalOptions = LayoutOptions.End
+                };
+
+                addButton.Clicked += (s, e) =>
+                {
+                    if (addedProducts.Contains(product.Name))
+                    {
+
+                        addedProducts.Remove(product.Name);
+                        addButton.Text = "+";
+                        addButton.BackgroundColor = Colors.Purple;
+                        SaveButton.IsEnabled = addedProducts.Count > 0; 
+                    }
+                    else
+                    {
+
+                        addedProducts.Add(product.Name);
+                        addButton.Text = "✓";
+                        addButton.BackgroundColor = Colors.Green;
+                        SaveButton.IsEnabled = true; 
+                    }
+                };
+
+
+                var buttonStack = new StackLayout
+                {
+                    Orientation = StackOrientation.Horizontal,
+                    Spacing = 5,
+                    HorizontalOptions = LayoutOptions.EndAndExpand
+                };
+
+                buttonStack.Children.Add(detailsButton);
+                buttonStack.Children.Add(addButton);
+
                 productStack.Children.Add(productImage);
                 productStack.Children.Add(productLabel);
-                productStack.Children.Add(detailsButton);
+                productStack.Children.Add(buttonStack);
 
                 ProductList.Children.Add(productStack);
             }
         }
+
+
+
 
         private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {

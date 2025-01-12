@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Microsoft.Maui.Controls;
 
@@ -68,7 +68,7 @@ namespace AyseSudeKara_Project
 
         private void UpdateToDoList()
         {
-            ToDoList.Children.Clear();
+            ToDoList.Children.Clear(); 
 
             if (toDoProducts.Count == 0)
             {
@@ -83,36 +83,47 @@ namespace AyseSudeKara_Project
                 var productStack = new StackLayout
                 {
                     Orientation = StackOrientation.Horizontal,
-                    Padding = 5
+                    Spacing = 10,
+                    Padding = new Thickness(5)
                 };
 
-                var label = new Label
+
+                var circleButton = new Button
+                {
+                    Text = "○", 
+                    BackgroundColor = Colors.Transparent,
+                    BorderColor = Colors.Black,
+                    BorderWidth = 1,
+                    CornerRadius = 15, 
+                    WidthRequest = 30,
+                    HeightRequest = 30,
+                    FontSize = 14,
+                    TextColor = Colors.Black,
+                    HorizontalOptions = LayoutOptions.Start
+                };
+
+                circleButton.Clicked += (s, e) =>
+                {
+                    circleButton.Text = circleButton.Text == "○" ? "●" : "○"; 
+                };
+
+
+                var productLabel = new Label
                 {
                     Text = product,
                     VerticalOptions = LayoutOptions.Center,
-                    FontSize = 16
+                    FontSize = 14, 
+                    LineBreakMode = LineBreakMode.WordWrap, 
+                    HorizontalOptions = LayoutOptions.StartAndExpand
                 };
 
-                var completeButton = new Button
-                {
-                    Text = "Tamamla",
-                    BackgroundColor = Colors.Green,
-                    TextColor = Colors.White,
-                    FontSize = 14
-                };
-
-                completeButton.Clicked += (s, e) =>
-                {
-                    label.TextDecorations = TextDecorations.Strikethrough;
-                    completeButton.IsEnabled = false;
-                };
-
-                productStack.Children.Add(label);
-                productStack.Children.Add(completeButton);
+                productStack.Children.Add(circleButton);
+                productStack.Children.Add(productLabel);
 
                 ToDoList.Children.Add(productStack);
             }
         }
+
 
         protected override void OnAppearing()
         {
