@@ -23,12 +23,54 @@ namespace AyseSudeKara_Project
 
             products = new List<Product>
             {
-                new Product { Name = "The Purest Solutions Toz Peeling", ImageSource = "purest_peeling.jpg" },
-                new Product { Name = "CLINIQUE Moisture Surge™ - 100H Auto-Replenishing Nemlendirici", ImageSource = "clinique_moisturizer.jpg" },
-                new Product { Name = "ERBORIAN CC Eye with Centella Asiatica", ImageSource = "erborian_cc_eye.jpg" },
-                new Product { Name = "The Purest Solutions Aydınlatıcı C Vitamini Cilt Serumu", ImageSource = "purest_cvitamin.jpg" },
-                new Product { Name = "ESTÉE LAUDER Advanced Night Repair - Onarıcı Gece Serumu", ImageSource = "estee_night_repair.jpg" },
-                new Product { Name = "Maru-Derm Hyalüronik Asit & Kolajen Cilt Bakım Serumu", ImageSource = "maruderm_hyaluronic.jpg" }
+                new Product
+                {
+                    Name = "The Purest Solutions Toz Peeling",
+                    ImageSource = "purest_peeling.jpg",
+                    Type = "Peeling",
+                    UsageFrequency = "Haftada 1",
+                    AdditionalInfo = "Yağlı ve karma ciltler için uygun."
+                },
+                new Product
+                {
+                    Name = "CLINIQUE Moisture Surge™ - 100H Auto-Replenishing Nemlendirici",
+                    ImageSource = "clinique_moisturizer.jpg",
+                    Type = "Nemlendirici Krem",
+                    UsageFrequency = "Her gün",
+                    AdditionalInfo = "Tüm cilt tipleri için uygundur."
+                },
+                new Product
+                {
+                    Name = "ERBORIAN CC Eye with Centella Asiatica",
+                    ImageSource = "erborian_cc_eye.jpg",
+                    Type = "Göz Kremi",
+                    UsageFrequency = "Her gün",
+                    AdditionalInfo = "Göz çevresi koyuluklarını azaltır."
+                },
+                new Product
+                {
+                    Name = "The Purest Solutions Aydınlatıcı C Vitamini Cilt Serumu",
+                    ImageSource = "purest_cvitamin.jpg",
+                    Type = "C Vitamini Serumu",
+                    UsageFrequency = "3 günde 1",
+                    AdditionalInfo = "Cilt tonunu eşitlemeye yardımcı olur."
+                },
+                new Product
+                {
+                    Name = "ESTÉE LAUDER Advanced Night Repair - Onarıcı Gece Serumu",
+                    ImageSource = "estee_night_repair.jpg",
+                    Type = "Gece Serumu",
+                    UsageFrequency = "Her gece",
+                    AdditionalInfo = "Gece cilt onarımını destekler."
+                },
+                new Product
+                {
+                    Name = "Maru-Derm Hyalüronik Asit & Kolajen Cilt Bakım Serumu",
+                    ImageSource = "maruderm_hyaluronic.jpg",
+                    Type = "Kolajen Serumu",
+                    UsageFrequency = "3 günde 1",
+                    AdditionalInfo = "Cilt elastikiyetini artırır."
+                }
             };
 
 
@@ -64,34 +106,23 @@ namespace AyseSudeKara_Project
                     WidthRequest = 200
                 };
 
-                var addButton = new Button
+                var detailsButton = new Button
                 {
-                    Text = addedProducts.Contains(product.Name) ? "✓" : "+",
-                    BackgroundColor = addedProducts.Contains(product.Name) ? Colors.Green : Colors.Purple,
+                    Text = "Detaylar",
+                    BackgroundColor = Colors.Orange,
                     TextColor = Colors.White
                 };
 
-                addButton.Clicked += (s, e) =>
+                detailsButton.Clicked += async (s, e) =>
                 {
-                    if (addedProducts.Contains(product.Name))
-                    {
-                        addedProducts.Remove(product.Name);
-                        ProductRemoved?.Invoke(this, product.Name); 
-                        addButton.Text = "+";
-                        addButton.BackgroundColor = Colors.Purple;
-                    }
-                    else
-                    {
-                        addedProducts.Add(product.Name);
-                        ProductAdded?.Invoke(this, product.Name); 
-                        addButton.Text = "✓";
-                        addButton.BackgroundColor = Colors.Green;
-                    }
+
+                    var detailPage = new ProductDetailsPage(product);
+                    await Navigation.PushAsync(detailPage);
                 };
 
                 productStack.Children.Add(productImage);
                 productStack.Children.Add(productLabel);
-                productStack.Children.Add(addButton);
+                productStack.Children.Add(detailsButton);
 
                 ProductList.Children.Add(productStack);
             }
@@ -119,6 +150,9 @@ namespace AyseSudeKara_Project
             }
 
 
+            await DisplayAlert("Başarılı", "Ürünler kaydedildi.", "Tamam");
+
+
             await Navigation.PopAsync();
         }
     }
@@ -127,5 +161,8 @@ namespace AyseSudeKara_Project
     {
         public string Name { get; set; }
         public string ImageSource { get; set; }
+        public string Type { get; set; } 
+        public string UsageFrequency { get; set; } 
+        public string AdditionalInfo { get; set; } 
     }
 }

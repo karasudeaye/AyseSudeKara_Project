@@ -41,7 +41,9 @@ namespace AyseSudeKara_Project
         {
             var addProductPage = new AddProductPage(toDoProducts);
 
+
             addProductPage.ProductAdded += OnProductAdded;
+            addProductPage.ProductRemoved += OnProductRemoved;
 
             await Navigation.PushAsync(addProductPage);
         }
@@ -51,7 +53,16 @@ namespace AyseSudeKara_Project
             if (!toDoProducts.Contains(productName))
             {
                 toDoProducts.Add(productName);
-                UpdateToDoList();
+                UpdateToDoList(); 
+            }
+        }
+
+        private void OnProductRemoved(object sender, string productName)
+        {
+            if (toDoProducts.Contains(productName))
+            {
+                toDoProducts.Remove(productName);
+                UpdateToDoList(); 
             }
         }
 

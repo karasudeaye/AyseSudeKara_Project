@@ -14,12 +14,14 @@
             <StackLayout x:Name="ProductList" Spacing="10" />
         </ScrollView>
 
-        <Button Text="Kaydet"
+
+        <Button x:Name="SaveButton"
+                Text="Kaydet"
                 BackgroundColor="Blue"
                 TextColor="White"
                 FontSize="18"
+                IsEnabled="False"
                 Clicked="OnSaveClicked" />
-        
-    </StackLayout>
 
+    </StackLayout>
 </ContentPage>
