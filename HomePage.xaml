@@ -24,6 +24,7 @@
 
         <ScrollView>
             <StackLayout x:Name="ToDoList" Padding="10" Spacing="10">
+
             </StackLayout>
         </ScrollView>
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Maui.Controls;
 
 namespace AyseSudeKara_Project
@@ -7,17 +8,15 @@ namespace AyseSudeKara_Project
     public partial class HomePage : ContentPage
     {
         private DateTime currentDate;
-        private List<string> toDoProducts;
+        private List<Product> products;
 
         public HomePage()
         {
             InitializeComponent();
 
             currentDate = DateTime.Now;
-            toDoProducts = new List<string>();
-
+            products = new List<Product>(); 
             UpdateDate();
-            UpdateToDoList();
         }
 
         private void UpdateDate()
@@ -29,56 +28,56 @@ namespace AyseSudeKara_Project
         {
             currentDate = currentDate.AddDays(-1);
             UpdateDate();
+            UpdateToDoListForDay(currentDate);
         }
 
         private void OnNextDayClicked(object sender, EventArgs e)
         {
             currentDate = currentDate.AddDays(1);
             UpdateDate();
+            UpdateToDoListForDay(currentDate);
         }
 
         private async void OnAddProductClicked(object sender, EventArgs e)
         {
-            var addProductPage = new AddProductPage(toDoProducts);
-
-
-            addProductPage.ProductAdded += OnProductAdded;
-            addProductPage.ProductRemoved += OnProductRemoved;
-
+            var addProductPage = new AddProductPage(new List<string>());
             await Navigation.PushAsync(addProductPage);
-        }
 
-        private void OnProductAdded(object sender, string productName)
-        {
-            if (!toDoProducts.Contains(productName))
+
+            addProductPage.Disappearing += (s, args) =>
             {
-                toDoProducts.Add(productName);
-                UpdateToDoList();
-            }
+                if (addProductPage.Products != null && addProductPage.Products.Any())
+                {
+                    products = addProductPage.Products;
+                    UpdateToDoListForDay(currentDate);
+                }
+            };
         }
 
-        private void OnProductRemoved(object sender, string productName)
+        private void UpdateToDoListForDay(DateTime date)
         {
-            if (toDoProducts.Contains(productName))
-            {
-                toDoProducts.Remove(productName);
-                UpdateToDoList();
-            }
-        }
-
-        private void UpdateToDoList()
-        {
-            ToDoList.Children.Clear(); 
-
-            if (toDoProducts.Count == 0)
+            if (products == null || !products.Any())
             {
                 EmptyListLabel.IsVisible = true;
+                ToDoList.Children.Clear();
                 return;
             }
 
             EmptyListLabel.IsVisible = false;
 
-            foreach (var product in toDoProducts)
+            var sortedProducts = products
+                .Where(product =>
+                {
+                    if (product.UsageFrequency == "Her gün") return true;
+                    if (product.UsageFrequency == "Haftada 1" && date.DayOfWeek == DayOfWeek.Sunday) return true;
+                    if (product.UsageFrequency == "3 günde 1" && (date - DateTime.Now).Days % 3 == 0) return true;
+                    return false;
+                })
+                .OrderBy(product => product.Order);
+
+            ToDoList.Children.Clear();
+
+            foreach (var product in sortedProducts)
             {
                 var productStack = new StackLayout
                 {
@@ -87,48 +86,31 @@ namespace AyseSudeKara_Project
                     Padding = new Thickness(5)
                 };
 
-
-                var circleButton = new Button
+                var checkBox = new CheckBox
                 {
-                    Text = "○", 
-                    BackgroundColor = Colors.Transparent,
-                    BorderColor = Colors.Black,
-                    BorderWidth = 1,
-                    CornerRadius = 15, 
-                    WidthRequest = 30,
-                    HeightRequest = 30,
-                    FontSize = 14,
-                    TextColor = Colors.Black,
-                    HorizontalOptions = LayoutOptions.Start
+                    Color = Colors.Green,
+                    VerticalOptions = LayoutOptions.Center
                 };
-
-                circleButton.Clicked += (s, e) =>
-                {
-                    circleButton.Text = circleButton.Text == "○" ? "●" : "○"; 
-                };
-
 
                 var productLabel = new Label
                 {
-                    Text = product,
-                    VerticalOptions = LayoutOptions.Center,
-                    FontSize = 14, 
-                    LineBreakMode = LineBreakMode.WordWrap, 
+                    Text = product.Name,
+                    FontSize = 14,
+                    LineBreakMode = LineBreakMode.WordWrap,
                     HorizontalOptions = LayoutOptions.StartAndExpand
                 };
 
-                productStack.Children.Add(circleButton);
+                checkBox.CheckedChanged += (s, e) =>
+                {
+                    productLabel.TextDecorations = e.Value ? TextDecorations.Strikethrough : TextDecorations.None;
+                    productLabel.TextColor = e.Value ? Colors.Gray : Colors.Black;
+                };
+
+                productStack.Children.Add(checkBox);
                 productStack.Children.Add(productLabel);
 
                 ToDoList.Children.Add(productStack);
             }
-        }
-
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            UpdateToDoList(); 
         }
     }
 }

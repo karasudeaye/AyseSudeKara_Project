@@ -7,16 +7,16 @@ namespace AyseSudeKara_Project
 {
     public partial class AddProductPage : ContentPage
     {
-        public event EventHandler<string> ProductAdded;
-        public event EventHandler<string> ProductRemoved;
+        public List<Product> Products { get; private set; } 
 
-        private List<Product> products;
-        private List<string> addedProducts;
+        private List<Product> products; 
+        private List<string> addedProducts; 
 
         public AddProductPage(List<string> existingAddedProducts)
         {
             InitializeComponent();
 
+            Products = new List<Product>(); 
             addedProducts = existingAddedProducts ?? new List<string>();
 
             products = new List<Product>
@@ -27,7 +27,8 @@ namespace AyseSudeKara_Project
                     ImageSource = "purest_peeling.jpg",
                     Type = "Peeling",
                     UsageFrequency = "Haftada 1",
-                    AdditionalInfo = "Yağlı ve karma ciltler için uygun."
+                    AdditionalInfo = "Yağlı ve karma ciltler için uygun.",
+                    Order = 3
                 },
                 new Product
                 {
@@ -35,7 +36,8 @@ namespace AyseSudeKara_Project
                     ImageSource = "clinique_moisturizer.jpg",
                     Type = "Nemlendirici Krem",
                     UsageFrequency = "Her gün",
-                    AdditionalInfo = "Tüm cilt tipleri için uygundur."
+                    AdditionalInfo = "Tüm cilt tipleri için uygundur.",
+                    Order = 7
                 },
                 new Product
                 {
@@ -43,7 +45,8 @@ namespace AyseSudeKara_Project
                     ImageSource = "erborian_cc_eye.jpg",
                     Type = "Göz Kremi",
                     UsageFrequency = "Her gün",
-                    AdditionalInfo = "Göz çevresi koyuluklarını azaltır."
+                    AdditionalInfo = "Göz çevresi koyuluklarını azaltır.",
+                    Order = 6
                 },
                 new Product
                 {
@@ -51,7 +54,8 @@ namespace AyseSudeKara_Project
                     ImageSource = "purest_cvitamin.jpg",
                     Type = "C Vitamini Serumu",
                     UsageFrequency = "3 günde 1",
-                    AdditionalInfo = "Cilt tonunu eşitlemeye yardımcı olur."
+                    AdditionalInfo = "Cilt tonunu eşitlemeye yardımcı olur.",
+                    Order = 5
                 },
                 new Product
                 {
@@ -59,7 +63,8 @@ namespace AyseSudeKara_Project
                     ImageSource = "estee_night_repair.jpg",
                     Type = "Gece Serumu",
                     UsageFrequency = "Her gece",
-                    AdditionalInfo = "Gece cilt onarımını destekler."
+                    AdditionalInfo = "Gece cilt onarımını destekler.",
+                    Order = 5
                 },
                 new Product
                 {
@@ -67,7 +72,80 @@ namespace AyseSudeKara_Project
                     ImageSource = "maruderm_hyaluronic.jpg",
                     Type = "Kolajen Serumu",
                     UsageFrequency = "3 günde 1",
-                    AdditionalInfo = "Cilt elastikiyetini artırır."
+                    AdditionalInfo = "Cilt elastikiyetini artırır.",
+                    Order = 5
+                },
+                new Product
+                {
+                    Name = "La Roche Posay Effaclar Yüz Temizleme Jeli",
+                    ImageSource = "la_roche_posay_cleanser.jpg",
+                    Type = "Yüz Yıkama Jeli",
+                    UsageFrequency = "Her gün",
+                    AdditionalInfo = "Cilt temizliği için uygun.",
+                    Order = 2
+                },
+                new Product
+                {
+                    Name = "Garnier Çift Fazlı Micellar Kusursuz Makyaj Temizleme Suyu",
+                    ImageSource = "garnier_micellar_water.jpg",
+                    Type = "Makyaj Temizleme Suyu",
+                    UsageFrequency = "Her gün",
+                    AdditionalInfo = "Makyajı nazikçe temizler.",
+                    Order = 1
+                },
+                new Product
+                {
+                    Name = "LANCÔME Tonique Confort - Nemlendirici Yüz Toniği",
+                    ImageSource = "lancome_tonique_confort.jpg",
+                    Type = "Tonik",
+                    UsageFrequency = "Her gün",
+                    AdditionalInfo = "Cildi ferahlatır ve hazırlar.",
+                    Order = 4
+                },
+                new Product
+                {
+                    Name = "La Roche Posay Anthelios UVmune Fluide Invisible SPF 50+ Güneş Koruyucu",
+                    ImageSource = "la_roche_posay_sunscreen.jpg",
+                    Type = "Güneş Koruyucu",
+                    UsageFrequency = "Her gün",
+                    AdditionalInfo = "Cilt koruması sağlar.",
+                    Order = 8
+                },
+                new Product
+                {
+                    Name = "The Purest Solutions Siyah Nokta Ve Sivilce Karşıtı Niacinamide Cilt Bakım Serumu",
+                    ImageSource = "purest_niacinamide_serum.jpg",
+                    Type = "Niacinamide Serumu",
+                    UsageFrequency = "3 günde 1",
+                    AdditionalInfo = "Sivilce ve siyah noktaları azaltır.",
+                    Order = 5
+                },
+                new Product
+                {
+                    Name = "Cream Co. Hyaluronik Asit Peptit Serum",
+                    ImageSource = "cream_co_hyaluronic_serum.jpg",
+                    Type = "Hyaluronik Asit Serumu",
+                    UsageFrequency = "3 günde 1",
+                    AdditionalInfo = "Cilde nem kazandırır.",
+                    Order = 5
+                },
+                new Product
+                {
+                    Name = "The Purest Solutions Kırışıklık Karşıtı, Onarıcı Retinol Serum",
+                    ImageSource = "purest_retinol_serum.jpg",
+                    Type = "Retinol Serumu",
+                    UsageFrequency = "3 günde 1",
+                    AdditionalInfo = "Kırışıklık karşıtı ve onarıcı.",
+                    Order = 5
+                },
+                new Product
+                {
+                    Name = "Licape Gözenek Sıkılaştırıcı ve Cilt Bariyeri Güçlendirici Niacinamide Serum",
+                    ImageSource = "licape_niacinamide_serum.jpg",
+                    Type = "Niacinamide Serumu",
+                    UsageFrequency = "3 günde 1",
+                    AdditionalInfo = "Gözenek sıkılaştırıcı etki.",
+                    Order = 5
                 }
             };
 
@@ -76,9 +154,11 @@ namespace AyseSudeKara_Project
 
         private void UpdateProductList(IEnumerable<Product> productList)
         {
+            var sortedProducts = productList.OrderBy(p => p.Order); 
+
             ProductList.Children.Clear(); 
 
-            foreach (var product in productList)
+            foreach (var product in sortedProducts)
             {
                 var productStack = new StackLayout
                 {
@@ -100,7 +180,7 @@ namespace AyseSudeKara_Project
                     VerticalOptions = LayoutOptions.Center,
                     FontSize = 16,
                     LineBreakMode = LineBreakMode.WordWrap,
-                    WidthRequest = 150 
+                    WidthRequest = 150
                 };
 
                 var detailsButton = new Button
@@ -108,7 +188,7 @@ namespace AyseSudeKara_Project
                     Text = "Detay",
                     BackgroundColor = Colors.Orange,
                     TextColor = Colors.White,
-                    FontSize = 14,
+                    FontSize = 12,
                     HorizontalOptions = LayoutOptions.End
                 };
 
@@ -120,7 +200,7 @@ namespace AyseSudeKara_Project
 
                 var addButton = new Button
                 {
-                    Text = addedProducts.Contains(product.Name) ? "✓" : "+", 
+                    Text = addedProducts.Contains(product.Name) ? "✓" : "+",
                     BackgroundColor = addedProducts.Contains(product.Name) ? Colors.Green : Colors.Purple,
                     TextColor = Colors.White,
                     FontSize = 14,
@@ -131,22 +211,19 @@ namespace AyseSudeKara_Project
                 {
                     if (addedProducts.Contains(product.Name))
                     {
-
                         addedProducts.Remove(product.Name);
                         addButton.Text = "+";
                         addButton.BackgroundColor = Colors.Purple;
-                        SaveButton.IsEnabled = addedProducts.Count > 0; 
+                        SaveButton.IsEnabled = addedProducts.Count > 0;
                     }
                     else
                     {
-
                         addedProducts.Add(product.Name);
                         addButton.Text = "✓";
                         addButton.BackgroundColor = Colors.Green;
-                        SaveButton.IsEnabled = true; 
+                        SaveButton.IsEnabled = true;
                     }
                 };
-
 
                 var buttonStack = new StackLayout
                 {
@@ -166,9 +243,6 @@ namespace AyseSudeKara_Project
             }
         }
 
-
-
-
         private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
             var query = e.NewTextValue.ToLower();
@@ -180,12 +254,11 @@ namespace AyseSudeKara_Project
         {
             foreach (var productName in addedProducts)
             {
-                ProductAdded?.Invoke(this, productName);
-            }
-
-            foreach (var productName in products.Select(p => p.Name).Where(p => !addedProducts.Contains(p)))
-            {
-                ProductRemoved?.Invoke(this, productName);
+                var product = products.FirstOrDefault(p => p.Name == productName);
+                if (product != null)
+                {
+                    Products.Add(product); 
+                }
             }
 
             await DisplayAlert("Başarılı", "Ürünler kaydedildi.", "Tamam");
@@ -200,5 +273,6 @@ namespace AyseSudeKara_Project
         public string Type { get; set; }
         public string UsageFrequency { get; set; }
         public string AdditionalInfo { get; set; }
+        public int Order { get; set; } 
     }
 }
