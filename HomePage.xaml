@@ -1,36 +1,35 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AyseSudeKara_Project.HomePage"
              Title="Ana Sayfa">
 
-    <StackLayout Padding="20" Spacing="15">
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+
+            <RowDefinition Height="Auto" />
+
+        </Grid.RowDefinitions>
 
 
-        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Spacing="10">
-            <Button Text="&lt;" Clicked="OnPreviousDayClicked" />
-            <Label x:Name="DateLabel" FontSize="20" VerticalOptions="Center" HorizontalOptions="CenterAndExpand" />
-            <Button Text=">" Clicked="OnNextDayClicked" />
-        </StackLayout>
-
-
-        <Label x:Name="EmptyListLabel" 
-               Text="Henüz bir ürün eklemediniz. Eklemek için + butonuna tıklayın." 
-               FontSize="16" 
-               HorizontalTextAlignment="Center" 
-               VerticalOptions="CenterAndExpand"
-               IsVisible="False" />
-
-
-        <ScrollView>
-            <StackLayout x:Name="ToDoList" Padding="10" Spacing="10">
+        <ScrollView Grid.Row="0">
+            <StackLayout x:Name="ToDoList"
+                         VerticalOptions="Center"
+                         HorizontalOptions="Center">
 
             </StackLayout>
         </ScrollView>
 
 
-        <Button Text="+" FontSize="24" BackgroundColor="Purple" TextColor="White" HorizontalOptions="Center" VerticalOptions="End" Clicked="OnAddProductClicked" />
+        <Button Text="+" 
+                FontSize="24" 
+                BackgroundColor="Purple" 
+                TextColor="White" 
+                HorizontalOptions="Center" 
+                VerticalOptions="End" 
+                Clicked="OnAddProductClicked"
+                Grid.Row="1" />
+    </Grid>
 
-
-    </StackLayout>
 </ContentPage>

@@ -9,7 +9,7 @@ namespace AyseSudeKara_Project
     {
         private DateTime currentDate;
         private List<Product> products; 
-        private Dictionary<string, List<RoutineItem>> dailyRoutineState; 
+        private Dictionary<string, List<RoutineItem>> dailyRoutineState;
 
         public HomePage()
         {
@@ -24,7 +24,11 @@ namespace AyseSudeKara_Project
             products = new List<Product>();
 
             UpdateDate();
+
+
+            UpdateToDoListForDay(currentDate);
         }
+
 
         private void UpdateDate()
         {
@@ -44,6 +48,15 @@ namespace AyseSudeKara_Project
             UpdateDate();
             UpdateToDoListForDay(currentDate);
         }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+
+            UpdateToDoListForDay(currentDate);
+        }
+
 
         private async void OnAddProductClicked(object sender, EventArgs e)
         {
@@ -79,19 +92,21 @@ namespace AyseSudeKara_Project
             var dailyItems = dailyRoutineState[dateKey];
             ToDoList.Children.Clear();
 
+
             if (dailyItems == null || dailyItems.Count == 0)
             {
-
                 var emptyLabel = new Label
                 {
                     Text = "Ürün eklemek için + butonuna basın.",
                     FontSize = 16,
                     HorizontalOptions = LayoutOptions.Center,
-                    VerticalOptions = LayoutOptions.Center
+                    VerticalOptions = LayoutOptions.CenterAndExpand,
+                    TextColor = Colors.Black
                 };
                 ToDoList.Children.Add(emptyLabel);
                 return;
             }
+
 
             foreach (var item in dailyItems)
             {
@@ -132,6 +147,8 @@ namespace AyseSudeKara_Project
                 ToDoList.Children.Add(productStack);
             }
         }
+
+
 
         private List<RoutineItem> CreateDailyRoutine(DateTime date)
         {
