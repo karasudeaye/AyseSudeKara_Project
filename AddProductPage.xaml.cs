@@ -258,20 +258,25 @@ namespace AyseSudeKara_Project
             UpdateProductList(filteredProducts);
         }
 
-        private async void OnSaveClicked(object sender, EventArgs e)
+        public event EventHandler<Product> ProductAdded;
+
+        private void OnSaveClicked(object sender, EventArgs e)
         {
+
             foreach (var productName in addedProducts)
             {
                 var product = products.FirstOrDefault(p => p.Name == productName);
                 if (product != null)
                 {
-                    Products.Add(product); 
+
+                    ProductAdded?.Invoke(this, product);
                 }
             }
 
-            await DisplayAlert("Başarılı", "Ürünler kaydedildi.", "Tamam");
-            await Navigation.PopAsync();
+            DisplayAlert("Başarılı", "Ürünler kaydedildi.", "Tamam");
+            Navigation.PopAsync();
         }
+
     }
 
     public class Product

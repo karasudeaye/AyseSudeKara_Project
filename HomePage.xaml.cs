@@ -61,22 +61,33 @@ namespace AyseSudeKara_Project
         private async void OnAddProductClicked(object sender, EventArgs e)
         {
 
-            var productNames = products.Select(p => p.Name).ToList();
+            var addProductPage = new AddProductPage(new List<string>());
+            addProductPage.ProductAdded += (s, product) =>
+            {
+
+                var dateKey = currentDate.ToString("yyyy-MM-dd");
+                if (!dailyRoutineState.ContainsKey(dateKey))
+                {
+                    dailyRoutineState[dateKey] = CreateDailyRoutine(currentDate);
+                }
 
 
-            var addProductPage = new AddProductPage(productNames);
+                if (!dailyRoutineState[dateKey].Any(r => r.ProductName == product.Name))
+                {
+                    dailyRoutineState[dateKey].Add(new RoutineItem
+                    {
+                        ProductName = product.Name,
+                        IsCompleted = false
+                    });
+                }
+            };
+
             await Navigation.PushAsync(addProductPage);
 
 
-            addProductPage.Disappearing += (s, args) =>
-            {
-                if (addProductPage.Products != null && addProductPage.Products.Any())
-                {
-                    products = addProductPage.Products;
-                    UpdateToDoListForDay(currentDate);
-                }
-            };
+            UpdateToDoListForDay(currentDate);
         }
+
 
 
 
@@ -92,20 +103,24 @@ namespace AyseSudeKara_Project
             var dailyItems = dailyRoutineState[dateKey];
             ToDoList.Children.Clear();
 
+
             if (dailyItems == null || dailyItems.Count == 0)
             {
-
                 var emptyLabel = new Label
                 {
                     Text = "Ürün eklemek için + butonuna basın.",
                     FontSize = 16,
-                    HorizontalOptions = LayoutOptions.Center,
-                    VerticalOptions = LayoutOptions.Center,
+                    HorizontalTextAlignment = TextAlignment.Center, 
+                    VerticalTextAlignment = TextAlignment.Start,    
+                    HorizontalOptions = LayoutOptions.Center,       
+                    VerticalOptions = LayoutOptions.Start,          
+                    Margin = new Thickness(70, 40, 0, 0),            
                     TextColor = Colors.Black
                 };
                 ToDoList.Children.Add(emptyLabel);
                 return;
             }
+
 
             foreach (var item in dailyItems)
             {
@@ -153,23 +168,21 @@ namespace AyseSudeKara_Project
         private List<RoutineItem> CreateDailyRoutine(DateTime date)
         {
             var routineOrder = new List<string>
-            {
-                "Makyaj Temizleme Suyu",
-                "Yüz Yıkama Jeli",
-                "Peeling",
-                "Tonik",
-                "Cilt ve Yüz Serumları",
-                "Göz Çevresi Kremi",
-                "Nemlendirici",
-                "Güneş Kremi"
-            };
+    {
+        "Makyaj Temizleme Suyu",
+        "Yüz Yıkama Jeli",
+        "Peeling",
+        "Tonik",
+        "Cilt ve Yüz Serumları",
+        "Göz Çevresi Kremi",
+        "Nemlendirici",
+        "Güneş Kremi"
+    };
 
             var serumList = products.Where(p => p.Type.Contains("Serum")).ToList();
             var peeling = products.FirstOrDefault(p => p.Type == "Peeling");
 
-
             var isPeelingDay = date.DayOfWeek == DayOfWeek.Sunday;
-
             var currentSerum = serumList.Count > 0 ? serumList[(date.Day - 1) % serumList.Count] : null;
 
             return routineOrder.Select(step =>
@@ -192,6 +205,7 @@ namespace AyseSudeKara_Project
                 return product != null ? new RoutineItem { ProductName = product.Name, IsCompleted = false } : null;
             }).Where(item => item != null).ToList();
         }
+
     }
 
     public class RoutineItem
