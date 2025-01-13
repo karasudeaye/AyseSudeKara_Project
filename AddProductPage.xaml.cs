@@ -164,14 +164,17 @@ namespace AyseSudeKara_Project
                 {
                     Orientation = StackOrientation.Horizontal,
                     Spacing = 10,
-                    Padding = new Thickness(5)
+                    Padding = new Thickness(5),
+                    BackgroundColor = Colors.White,
+                    Margin = new Thickness(5, 0) 
                 };
 
                 var productImage = new Image
                 {
                     Source = product.ImageSource,
                     WidthRequest = 50,
-                    HeightRequest = 50
+                    HeightRequest = 50,
+                    VerticalOptions = LayoutOptions.Center
                 };
 
                 var productLabel = new Label
@@ -180,7 +183,8 @@ namespace AyseSudeKara_Project
                     VerticalOptions = LayoutOptions.Center,
                     FontSize = 16,
                     LineBreakMode = LineBreakMode.WordWrap,
-                    WidthRequest = 150
+                    HorizontalOptions = LayoutOptions.StartAndExpand,
+                    Margin = new Thickness(5, 0)
                 };
 
                 var detailsButton = new Button
@@ -189,7 +193,8 @@ namespace AyseSudeKara_Project
                     BackgroundColor = Colors.Orange,
                     TextColor = Colors.White,
                     FontSize = 12,
-                    HorizontalOptions = LayoutOptions.End
+                    VerticalOptions = LayoutOptions.Center,
+                    Margin = new Thickness(5, 0)
                 };
 
                 detailsButton.Clicked += async (s, e) =>
@@ -204,7 +209,8 @@ namespace AyseSudeKara_Project
                     BackgroundColor = addedProducts.Contains(product.Name) ? Colors.Green : Colors.Purple,
                     TextColor = Colors.White,
                     FontSize = 14,
-                    HorizontalOptions = LayoutOptions.End
+                    VerticalOptions = LayoutOptions.Center,
+                    Margin = new Thickness(5, 0)
                 };
 
                 addButton.Clicked += (s, e) =>
@@ -242,6 +248,8 @@ namespace AyseSudeKara_Project
                 ProductList.Children.Add(productStack);
             }
         }
+
+
 
         private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
