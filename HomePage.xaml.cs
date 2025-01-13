@@ -8,27 +8,19 @@ namespace AyseSudeKara_Project
     public partial class HomePage : ContentPage
     {
         private DateTime currentDate;
-        private List<Product> products; 
+        private List<Product> products;
         private Dictionary<string, List<RoutineItem>> dailyRoutineState;
 
         public HomePage()
         {
             InitializeComponent();
-
-
             dailyRoutineState = new Dictionary<string, List<RoutineItem>>();
-
             currentDate = DateTime.Now;
 
-
             products = new List<Product>();
-
             UpdateDate();
-
-
             UpdateToDoListForDay(currentDate);
         }
-
 
         private void UpdateDate()
         {
@@ -52,39 +44,41 @@ namespace AyseSudeKara_Project
         protected override void OnAppearing()
         {
             base.OnAppearing();
-
-
             UpdateToDoListForDay(currentDate);
         }
 
-
         private async void OnAddProductClicked(object sender, EventArgs e)
         {
-
             var addProductPage = new AddProductPage(new List<string>());
-            addProductPage.ProductAdded += (s, product) =>
+
+            addProductPage.ProductAdded += async (s, product) =>
             {
+                Console.WriteLine($"Yeni ürün eklendi: {product.Name}");
 
-                var dateKey = currentDate.ToString("yyyy-MM-dd");
-                if (!dailyRoutineState.ContainsKey(dateKey))
+                for (var date = currentDate; date <= currentDate.AddDays(30); date = date.AddDays(1))
                 {
-                    dailyRoutineState[dateKey] = CreateDailyRoutine(currentDate);
-                }
+                    var dateKey = date.ToString("yyyy-MM-dd");
 
-
-                if (!dailyRoutineState[dateKey].Any(r => r.ProductName == product.Name))
-                {
-                    dailyRoutineState[dateKey].Add(new RoutineItem
+                    if (!dailyRoutineState.ContainsKey(dateKey))
                     {
-                        ProductName = product.Name,
-                        IsCompleted = false
-                    });
+                        dailyRoutineState[dateKey] = CreateDailyRoutine(date);
+                    }
+
+
+                    if (!dailyRoutineState[dateKey].Any(r => r.ProductName == product.Name))
+                    {
+                        dailyRoutineState[dateKey].Add(new RoutineItem
+                        {
+                            ProductName = product.Name,
+                            IsCompleted = false
+                        });
+                    }
+
+                    await Task.Delay(10); 
                 }
             };
 
             await Navigation.PushAsync(addProductPage);
-
-
             UpdateToDoListForDay(currentDate);
         }
 
@@ -103,26 +97,24 @@ namespace AyseSudeKara_Project
             var dailyItems = dailyRoutineState[dateKey];
             ToDoList.Children.Clear();
 
-
             if (dailyItems == null || dailyItems.Count == 0)
             {
                 var emptyLabel = new Label
                 {
                     Text = "Ürün eklemek için + butonuna basın.",
                     FontSize = 16,
-                    HorizontalTextAlignment = TextAlignment.Center, 
-                    VerticalTextAlignment = TextAlignment.Start,    
-                    HorizontalOptions = LayoutOptions.Center,       
-                    VerticalOptions = LayoutOptions.Start,          
-                    Margin = new Thickness(70, 40, 0, 0),            
+                    HorizontalTextAlignment = TextAlignment.Center,
+                    VerticalTextAlignment = TextAlignment.Start,
+                    HorizontalOptions = LayoutOptions.Center,
+                    VerticalOptions = LayoutOptions.Start,
+                    Margin = new Thickness(70, 40, 0, 0),
                     TextColor = Colors.Black
                 };
                 ToDoList.Children.Add(emptyLabel);
                 return;
             }
 
-
-            foreach (var item in dailyItems)
+            foreach (var item in dailyItems.OrderBy(i => i.Order)) 
             {
                 var productStack = new StackLayout
                 {
@@ -162,9 +154,6 @@ namespace AyseSudeKara_Project
             }
         }
 
-
-
-
         private List<RoutineItem> CreateDailyRoutine(DateTime date)
         {
             var routineOrder = new List<string>
@@ -173,38 +162,91 @@ namespace AyseSudeKara_Project
         "Yüz Yıkama Jeli",
         "Peeling",
         "Tonik",
-        "Cilt ve Yüz Serumları",
+        "Serum",
         "Göz Çevresi Kremi",
         "Nemlendirici",
         "Güneş Kremi"
     };
 
-            var serumList = products.Where(p => p.Type.Contains("Serum")).ToList();
+            var dailyRoutine = new List<RoutineItem>();
+            var serumList = products.Where(p => p.Type == "Serum").ToList();
             var peeling = products.FirstOrDefault(p => p.Type == "Peeling");
 
-            var isPeelingDay = date.DayOfWeek == DayOfWeek.Sunday;
-            var currentSerum = serumList.Count > 0 ? serumList[(date.Day - 1) % serumList.Count] : null;
+            bool isPeelingDay = (date.DayOfWeek == DayOfWeek.Sunday); 
 
-            return routineOrder.Select(step =>
+            RoutineItem serumItem = null;
+            if (serumList.Count > 0 && !isPeelingDay)
             {
-                if (step == "Peeling" && peeling != null)
+                var serumIndex = ((date.Day - 1) / 3) % serumList.Count; 
+                var currentSerum = serumList[serumIndex];
+                serumItem = new RoutineItem
                 {
-                    if (isPeelingDay)
-                        return new RoutineItem { ProductName = peeling.Name, IsCompleted = false };
-                    else
-                        return null;
+                    ProductName = currentSerum.Name,
+                    IsCompleted = false,
+                    Order = 5 
+                };
+            }
+
+            foreach (var step in routineOrder)
+            {
+                if (step == "Peeling")
+                {
+                    if (isPeelingDay && peeling != null)
+                    {
+                        dailyRoutine.Add(new RoutineItem
+                        {
+                            ProductName = peeling.Name,
+                            IsCompleted = false,
+                            Order = 3 
+                        });
+                    }
+                    continue;
                 }
 
-                if (step == "Cilt ve Yüz Serumları" && currentSerum != null)
+                if (step == "Serum")
                 {
-                    if (!isPeelingDay)
-                        return new RoutineItem { ProductName = currentSerum.Name, IsCompleted = false };
+                    if (serumItem != null)
+                    {
+                        dailyRoutine.Add(serumItem);
+                    }
+                    continue;
                 }
 
-                var product = products.FirstOrDefault(p => p.Type == step);
-                return product != null ? new RoutineItem { ProductName = product.Name, IsCompleted = false } : null;
-            }).Where(item => item != null).ToList();
+                var product = products.FirstOrDefault(p => p.Type == step && ShouldIncludeProduct(date, p));
+                if (product != null)
+                {
+                    dailyRoutine.Add(new RoutineItem
+                    {
+                        ProductName = product.Name,
+                        IsCompleted = false,
+                        Order = routineOrder.IndexOf(step) + 1 
+                    });
+                }
+            }
+
+            return dailyRoutine;
         }
+
+
+        private bool ShouldIncludeProduct(DateTime date, Product product)
+        {
+            switch (product.UsageFrequency)
+            {
+                case "Her gün":
+                    return true;
+
+                case "Haftada 1":
+                    return date.DayOfWeek == DayOfWeek.Sunday;
+
+                case "3 günde 1":
+                    return (date.Day - 1) % 3 == 0;
+
+                default:
+                    return false; 
+            }
+        }
+
+
 
     }
 
@@ -212,5 +254,7 @@ namespace AyseSudeKara_Project
     {
         public string ProductName { get; set; }
         public bool IsCompleted { get; set; }
+        public int Order { get; set; } 
+
     }
 }
