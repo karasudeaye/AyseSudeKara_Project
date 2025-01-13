@@ -29,12 +29,8 @@
         </ScrollView>
 
 
-        <Button Text="+" 
-                FontSize="24" 
-                BackgroundColor="Purple" 
-                TextColor="White" 
-                HorizontalOptions="Center" 
-                Clicked="OnAddProductClicked" />
+        <Button Text="+" FontSize="24" BackgroundColor="Purple" TextColor="White" HorizontalOptions="Center" VerticalOptions="End" Clicked="OnAddProductClicked" />
+
 
     </StackLayout>
 </ContentPage>

@@ -1,46 +1,29 @@
 ﻿using Microsoft.Maui.Controls;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text.Json;
 
 namespace AyseSudeKara_Project
 {
     public partial class HomePage : ContentPage
     {
         private DateTime currentDate;
-        private List<Product> products;
-        private Dictionary<string, List<RoutineItem>> dailyRoutineState;
+        private List<Product> products; 
+        private Dictionary<string, List<RoutineItem>> dailyRoutineState; 
 
         public HomePage()
         {
             InitializeComponent();
-            LoadRoutineState();
+
+
+            dailyRoutineState = new Dictionary<string, List<RoutineItem>>();
+
             currentDate = DateTime.Now;
-            products = new List<Product>(); 
+
+
+            products = new List<Product>();
+
             UpdateDate();
-        }
-
-        private void LoadRoutineState()
-        {
-            var filePath = Path.Combine(FileSystem.AppDataDirectory, "routineState.json");
-            if (File.Exists(filePath))
-            {
-                var json = File.ReadAllText(filePath);
-                dailyRoutineState = JsonSerializer.Deserialize<Dictionary<string, List<RoutineItem>>>(json) ?? new Dictionary<string, List<RoutineItem>>();
-            }
-            else
-            {
-                dailyRoutineState = new Dictionary<string, List<RoutineItem>>();
-            }
-        }
-
-        private void SaveRoutineState()
-        {
-            var filePath = Path.Combine(FileSystem.AppDataDirectory, "routineState.json");
-            var json = JsonSerializer.Serialize(dailyRoutineState);
-            File.WriteAllText(filePath, json);
         }
 
         private void UpdateDate()
@@ -141,7 +124,6 @@ namespace AyseSudeKara_Project
                     item.IsCompleted = e.Value;
                     productLabel.TextColor = e.Value ? Colors.Gray : Colors.Black;
                     productLabel.TextDecorations = e.Value ? TextDecorations.Strikethrough : TextDecorations.None;
-                    SaveRoutineState();
                 };
 
                 productStack.Children.Add(checkBox);
@@ -150,7 +132,6 @@ namespace AyseSudeKara_Project
                 ToDoList.Children.Add(productStack);
             }
         }
-
 
         private List<RoutineItem> CreateDailyRoutine(DateTime date)
         {
@@ -181,7 +162,7 @@ namespace AyseSudeKara_Project
                     if (isPeelingDay)
                         return new RoutineItem { ProductName = peeling.Name, IsCompleted = false };
                     else
-                        return null; 
+                        return null;
                 }
 
                 if (step == "Cilt ve Yüz Serumları" && currentSerum != null)
@@ -194,7 +175,6 @@ namespace AyseSudeKara_Project
                 return product != null ? new RoutineItem { ProductName = product.Name, IsCompleted = false } : null;
             }).Where(item => item != null).ToList();
         }
-
     }
 
     public class RoutineItem
