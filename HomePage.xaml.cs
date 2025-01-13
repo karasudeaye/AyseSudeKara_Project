@@ -92,21 +92,20 @@ namespace AyseSudeKara_Project
             var dailyItems = dailyRoutineState[dateKey];
             ToDoList.Children.Clear();
 
-
             if (dailyItems == null || dailyItems.Count == 0)
             {
+
                 var emptyLabel = new Label
                 {
                     Text = "Ürün eklemek için + butonuna basın.",
                     FontSize = 16,
                     HorizontalOptions = LayoutOptions.Center,
-                    VerticalOptions = LayoutOptions.CenterAndExpand,
+                    VerticalOptions = LayoutOptions.Center,
                     TextColor = Colors.Black
                 };
                 ToDoList.Children.Add(emptyLabel);
                 return;
             }
-
 
             foreach (var item in dailyItems)
             {
@@ -147,6 +146,7 @@ namespace AyseSudeKara_Project
                 ToDoList.Children.Add(productStack);
             }
         }
+
 
 
 
